@@ -9,7 +9,7 @@ const AppKey = "b9px38sstCWeqEGPxzTvLAk6";
 // AppKey 是公开的访问密钥，适用于在公开的客户端中使用。使用 AppKey 进行的访问受到 ACL 的限制。
 // A publicly accessible key exposed on the client side. Accessing data with the AppKey is restricted by ACL.
 
-const REST_API = "https://pandaoxi.github.io/triangle/";
+const REST_API = "https://dknnepkd.lc-cn-n1-shared.com";
 // 客户端使用的 REST API 服务器地址。客户端的具体配置方法请参考指定客户端的服务器地址。
 // A secret access key for trusted environments such as servers. Accessing data with the MasterKey bypasses all restrictions of ACL.
 
