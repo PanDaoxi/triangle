@@ -149,30 +149,35 @@ function setRandomGradientBackground(tag) {
 
 function ImageScale() {
 	console.log("ImageScale called...");
-	const images = document.querySelectorAll("img");
-	images.forEach((img) => {
-		if (img.classList.contains("avatar")) return;
-		img.classList.add("gallery-item");
-	});
 
-	images.forEach((image) => {
-		image.addEventListener("click", () => {
+	function updateImages() {
+		const images = document.querySelectorAll("img:not(.avatar)");
+		images.forEach((img) => {
+			if (!img.classList.contains("gallery-item")) {
+				img.classList.add("gallery-item");
+			}
+		});
+	}
+
+	function handleClick(event) {
+		if (event.target.classList.contains("gallery-item")) {
 			const activeImage = document.querySelector(".gallery-item.active");
-			if (activeImage && activeImage !== image) {
+			if (activeImage && activeImage !== event.target) {
 				activeImage.classList.remove("active");
 			}
-			image.classList.toggle("active");
-		});
-	});
-
-	document.addEventListener("click", (event) => {
-		if (!event.target.classList.contains("gallery-item")) {
+			event.target.classList.toggle("active");
+		} else {
 			const activeImage = document.querySelector(".gallery-item.active");
 			if (activeImage) {
 				activeImage.classList.remove("active");
 			}
 		}
-	});
+	}
+
+	updateImages();
+
+	document.removeEventListener("click", handleClick);
+	document.addEventListener("click", handleClick);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

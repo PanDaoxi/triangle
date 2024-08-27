@@ -333,7 +333,6 @@ async function showMessages(avatarURL, perPage) {
 		},
 	};
 
-	// 单开路由展示全文
 	const router = new VueRouter({
 		routes: [
 			{ path: "/", component: PostList },
