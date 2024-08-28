@@ -186,7 +186,7 @@ async function showMessages(avatarURL, perPage) {
 	}
 
 	// mdext 扩展指令
-	function mdext() {
+	window.mdext = () => {
 		// Highlight.js 高亮代码
 		document.querySelectorAll("pre code").forEach((block) => {
 			hljs.highlightBlock(block);
@@ -197,7 +197,7 @@ async function showMessages(avatarURL, perPage) {
 		showValine();
 		// 图片优化
 		ImageScale();
-	}
+	};
 
 	// 从云端获取 “动态” 信息
 	const msgsQuery = new AV.Query("Triangle");
@@ -393,8 +393,11 @@ function fetchLocalJson(file) {
 // 评论区
 function showValine() {
 	try {
+		// 获取表情包映射字典
 		fetchLocalJson("../media/json/emojiMaps.json").then((emojiMap) => {
+			// 禁用或不在 /posts/:id 下，不展示评论区
 			if (document.getElementById("vcomments") == null) return;
+			// 借用当前 id 作为 path 标记
 			var currentPath = document.getElementById("routepath").innerText;
 			new Valine({
 				el: "#vcomments",
@@ -409,14 +412,36 @@ function showValine() {
 				emojiMaps: emojiMap,
 				path: currentPath,
 			});
+			// 诗词
 			jinrishici.load(function (result) {
 				var jrsc_plac = result.data.content + "\n\t——" + "【" + result.data.origin.dynasty + "】" + result.data.origin.author + "《" + result.data.origin.title + "》";
 				document.getElementById("veditor").setAttribute("placeholder", jrsc_plac);
 			});
-			// 删除 vpower
-			document.getElementsByClassName("vpower")[0].innerHTML = "";
-			// 修改 vempty
-			document.getElementsByClassName("vempty")[0].innerText = "还没有评论";
+			// 多次间隔操作，避免还没加载完导致 DOM 操作失效
+			var _cnt = 0;
+			var _interval = setInterval(() => {
+				// Fixed bug #2：重复显示评论
+				const vcards = document.querySelectorAll("div.vcards div.vcard");
+				const seenIds = new Set();
+				vcards.forEach((vcard) => {
+					const id = vcard.id;
+					if (id && seenIds.has(id)) {
+						vcard.remove();
+					} else {
+						seenIds.add(id);
+					}
+				});
+				// alert("Try to fix");
+				// 删除 vpower
+				var vpower = document.querySelector(".vpower");
+				if (!!vpower) vpower.remove();
+				// 修改 vempty
+				var vempty = document.querySelector(".vempty");
+				if (!!vempty) vempty.innerHTML = "暂无评论。";
+
+				// 重复五次此操作
+				if (++_cnt == 5) clearInterval(_interval);
+			}, 1000);
 		});
 		// console.warn(emojiMap);
 	} catch (err) {
